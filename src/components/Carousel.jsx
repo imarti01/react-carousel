@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import img1 from '../assets/marek-piwnicki-NaGIz8xQQgM-unsplash.jpg';
 import img2 from '../assets/marek-piwnicki-sIaIHalCnsM-unsplash.jpg';
 import img3 from '../assets/marek-piwnicki-XafUptcVDHI-unsplash.jpg';
@@ -10,14 +10,22 @@ const Carousel = () => {
   const fotos = [img1, img2, img3, img4, img5, img6];
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const touchStartX = useRef(null);
+  const touchStartX = useRef(0);
+  const carouselRef = useRef(null);
+  const itemWidth = useRef(0);
+
+  useEffect(() => {
+    if (carouselRef.current) {
+      itemWidth.current = carouselRef.current.offsetWidth;
+    }
+  }, []);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchMove = (e) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === 0) return;
     const touchCurrentX = e.touches[0].clientX;
     const diffX = touchCurrentX - touchStartX.current;
 
@@ -31,7 +39,7 @@ const Carousel = () => {
       );
     }
 
-    touchStartX.current = null;
+    touchStartX.current = 0;
   };
 
   const handleTouchEnd = (e) => {
@@ -44,10 +52,16 @@ const Carousel = () => {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      style={{ touchAction: 'pan-x' }} // Permite el desplazamiento horizontal en dispositivos móviles
+      style={{ touchAction: 'pan-x' }}
+      ref={carouselRef}
     >
       <h2>React Carousel con desplazamiento táctil</h2>
-      <div className="carousel-container">
+      <div
+        className="carousel-container"
+        style={{
+          transform: `translateX(-${currentSlide * itemWidth.current}px)`,
+        }}
+      >
         {fotos.map((image, index) => (
           <div
             key={index}
