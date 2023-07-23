@@ -18,9 +18,8 @@ const Carousel = () => {
 
   const handleTouchMove = (e) => {
     if (touchStartX.current === null) return;
-
     const touchCurrentX = e.touches[0].clientX;
-    const diffX = touchStartX.current - touchCurrentX;
+    const diffX = touchCurrentX - touchStartX.current;
 
     if (diffX > 50) {
       // Deslizar hacia la izquierda
@@ -35,11 +34,16 @@ const Carousel = () => {
     touchStartX.current = null;
   };
 
+  const handleTouchEnd = (e) => {
+    e.stopPropagation();
+  };
+
   return (
     <div
       className="carousel"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{ touchAction: 'pan-x' }} // Permite el desplazamiento horizontal en dispositivos móviles
     >
       <h2>React Carousel con desplazamiento táctil</h2>
